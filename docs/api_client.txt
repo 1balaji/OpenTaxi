@@ -22,7 +22,7 @@ Returned data always contain:
 IMPORTANT!
 In order to generate valid signature the client must be somewhat synchrinized with the server (usually
 +/-20sec clock skew is appropriate).
-Server usually uses NTP (GPS or even local atomic may be an option).
+Server usually uses NTP (GPS or even local atomic clock may be an option).
 Client can use any synchronization method (NTP, GPS, GSM etc), but it is recommended to check server's
 timestamp using the sync helper (see below) to ensure good sync.
 

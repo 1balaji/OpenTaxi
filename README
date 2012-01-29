@@ -2,6 +2,33 @@
 ** OpenTaxi project **
 **********************
 
+Project overview
+================
+This project is aimed to automate taxi service and make it open to everybody.
+Every car driver has the right to take a passenger along the way, bring him/her to his/her destination
+and earn some money from this.
+Every passenger have the right to get the ride with such driver.
+So let's bring them together.
+
+Author of this project had some experience with commercial taxi service automation programs. They're ugly.
+The market needs a good, agile and sane product. Let's do it together for everyone.
+
+This project will start as the local service helper.
+
+Design overview
+===============
+It is a classic 3-tier:
+
++--------------+          +----------+             +-------------+
+|  Client      |          |          |             |             |
+| software     |          |  Server  |             |     Data    |
+| (browser,    | / HTTP \ | software | / MongoDB \ |    storage  |
+| Java app,    | \ JSON / |  (PHP)   | \ protocol/ |    engine   |
+| proprietary  |          |          |             |   (MongoDB) |
+| application) |          |          |             |             |
++--------------+          +----------+             +-------------+
+
+
 System requirements
 ===================
 
