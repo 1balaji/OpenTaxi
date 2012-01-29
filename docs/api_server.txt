@@ -2,7 +2,8 @@
 ** OpenTaxi server API **
 *************************
 
-Method implementation scripts are stored in "api" directory, in appropriate subdirectories and are named "index.php", like this:
+Method implementation scripts are stored in "api" directory, in appropriate subdirectories and are
+named "index.php", like this:
 /
  +api
  | +car
