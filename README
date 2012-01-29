@@ -1,0 +1,18 @@
+**********************
+** OpenTaxi project **
+**********************
+
+System requirements
+===================
+
+* Dedicated server (may be VPS or VDS)
+* UNIX-like OS (tested on linux)
+* Web server (apache, lighttpd).
+* PHP interpreter v.5.3 or higher
+  - GD library
+  - MongoDB driver
+  - memcached, xcache or APC module
+  - FastCGI SAPI is recommended.
+* MongoDB server
+* memcached (if memcached is used for caching)
+* Asterisk (for voice notifications)

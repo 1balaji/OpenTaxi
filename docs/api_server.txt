@@ -1,0 +1,34 @@
+*************************
+** OpenTaxi server API **
+*************************
+
+Method implementation scripts are stored in "api" directory, in appropriate subdirectories and are named "index.php", like this:
+/
+ +api
+ | +car
+ | | +list_colors
+ | | | -index.php
+ | | +list_models
+ | |   -index.php
+ | +order
+ | | +accept
+ | |   -index.php
+ ...
+
+This is to avoid URL rewriting and easily use servers like lighttpd or nginx.
+
+First 3 lines of the script must be:
+
+<?php
+global $DB, $RQ, $USER;
+require_once('../../../inc/bootstrap.inc.php');
+
+Bootstrap script checks the validity of client-server API request and parses it.
+On success, connects to database, retrieves user data and checks the signature.
+
+3 global variables are available after bootstrap:
+* $DB - MongoDB class instance connected to "opentaxi" DB
+* $RQ - API request as an associative array
+* $USER - Authenticated user's data as an associative array
+
+Script template can be found in "docs/api_server_method_template" directory of this distribution.

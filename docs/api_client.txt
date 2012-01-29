@@ -1,0 +1,292 @@
+********************************
+** OpenTaxi client-server API **
+********************************
+
+====================
+= HTTP API request =
+====================
+HTTP POST request to URL: http://<hostname.tld>/api/<method>
+Content-Type: text/json
+HTTP POST content must be a valid JSON-encoded request data.
+Minimal required request data is:
+{
+ "id": user_id, // user's phone number without "+" sign, expressed as integer number, 11 or 12 digits
+ "signature": "" // SHA1 hash of string consisting of concatenated method name, id, SHA1 hash of password and (UTC unix timestamp)/10.
+}
+Returned data always contain:
+{
+ "err": result, // result code, integer. 0 is OK.
+ "errmsg": "" // optional, error message
+}
+
+IMPORTANT!
+In order to generate valid signature the client must be somewhat synchrinized with the server (usually +/-20sec clock skew is appropriate).
+Server usually uses NTP (GPS or even local atomic may be an option).
+Client can use any synchronization method (NTP, GPS, GSM etc), but it is recommended to check server's timestamp using the sync helper (see below)
+to ensure good sync.
+
+====================
+= Method reference =
+====================
+
+Common request rules
+====================
+Parameters described must be merged with minimal request data.
+
+Common errors
+=============
+400 - Bad request (syntax error, required fields absent etc)
+401 - Bad signature (clock skew too large, wrong id and/or password or user blocked). No "errmsg".
+411 - CAPTCHA required (request rate is too high). No "errmsg".
+500 - Internal server error
+
+Handling user proprietary data
+==============================
+Proprietary data objects (PD) are designed for client-side extensions. If client software needs to store some extended data about user or UI settings,
+it can use PD.
+PD are of two types: private and public. Private is available for user itself only. Public is sent to everyone registered user by "user/get" request.
+PD size is limited (16kb by default). Do not use it for images, audio, video etc.
+PD is stored and transferred as an object. Best approach is to store each extension's proprietary data in separate object.
+Client software must be aware of PD. When updating user data, it must send all PD back to server, or else PD will be destroyed.
+
+User methods
+============
+
+user/get
+~~~~~~~~
+Retrieve user data. Full data is available only for user itself.
+Rate limit per IP applied.
+Parameters:
+{
+ "nick": "" // Optional user nick whose data to get.
+}
+Returns:
+{
+  "id": user_id, // For user itself only
+  "nick": "",
+  "fullname": "", // If it is published
+  "email": "", // If it is published
+  "flags": // Optional
+  {
+   "blocked": false, // User is blocked by administrator
+   "super": false, // Superuser
+   "dispatcher": false // User is allowed to place orders for other users
+  },
+  "car": // for drivers
+  {
+   "model": "", // Car model ID (taken from car/list_models method)
+   "color": "", // Car color ID (taken from car/list_colors method)
+   "number": "" // Car number
+  },
+  "driving": false, // Driver online and ready to take orders.
+  "favorites": // For user itself only
+  [
+   {
+    "name": "", // Name of favorite point
+    "point": [ longitude, latitude ] // Geodata
+   },
+   ...
+  ],
+  "PD_private": // Proprietary private data. For user itself only.
+  {
+  },
+  "PD_public": // Proprietary public data.
+  {
+  }
+}
+Can contain other data stored by client
+Errors:
+403 - User blocked by administrator
+404 - No such user. No "errmsg".
+
+user/register
+~~~~~~~~~~~~~
+Register user.
+Parameters:
+{
+ "captcha_code": "", // CAPTCHA image is loaded from http://hostname.tld/captcha/?id=user_id
+                     // Only users with "dispatcher" flag may omit this field.
+ "user":
+ {
+  "password": "", // SHA1 hash. Required
+  "nick": "", // required
+  "fullname": "",
+  "fullname_published": false,
+  "email": "",
+  "email_published": false,
+  "car": // for drivers
+  "flags": // Only allowed to superuser
+  {
+   "blocked": false, // User is blocked by administrator
+   "super": false, // Superuser
+   "dispatcher": false // User is allowed to place orders for other users
+  },
+  {
+   "model": "", // Car model ID (taken from car/list_models method)
+   "color": "", // Car color ID (taken from car/list_colors method)
+   "number": "" // Car number
+  }
+  "driving": false, // Driver online and ready to take orders. Can be set to true only if car field is filled.
+  "prop_private": // Proprietary private data (available only for user itself). Size limited usually to 16Kb.
+  {
+  },
+  "prop_public": // Proprietary public data. Size limited usually to 16Kb.
+  {
+  }
+ }
+}
+Returns:
+{}
+Errors:
+405 - ID or nick already exists in database
+410 - Bad CAPTCHA code
+
+
+user/update
+~~~~~~~~~~~
+Update user info (only for user itself). User object is replaced in database. Client software must be aware of additional fields and proprietary data.
+Rate limit per IP applied.
+Parameters:
+{
+ "user":
+ {
+  "password": "", // required
+  "nick": "", // required
+  "fullname": "",
+  "fullname_published": false,
+  "email": "",
+  "email_published": false,
+  "flags": // Only allowed to superuser
+  {
+   "blocked": false, // User is blocked by administrator
+   "super": false, // Superuser
+   "dispatcher": false // User is allowed to place orders for other users
+  },
+  "car": // for drivers
+  {
+   "model": "", // Car model ID (taken from car/list_models method)
+   "color": "", // Car color ID (taken from car/list_colors method)
+   "lp": "" // Car license plate
+  },
+  "driving": false, // Driver online and ready to take orders. Can be set to true only if car field is filled.
+  "location_current": [latitude, longitude], // Current location
+  "location_target": [latitude, longitude], // Target location (for drivers)
+  "prop_private": // Proprietary private data (available only for user itself). Size limited usually to 16Kb.
+  {
+  },
+  "prop_public": // Proprietary public data. Size limited usually to 16Kb.
+  {
+  }
+ }
+}
+Returns:
+{}
+Errors:
+400 - Nick already exists in database
+403 - User blocked by administrator
+
+user/add_favorite
+~~~~~~~~~~~~~~~~~
+
+user/update_favorite
+~~~~~~~~~~~~~~~~~
+
+user/rm_favorite
+~~~~~~~~~~~~~~~~~
+
+user/track
+~~~~~~~~~~
+Parameters:
+{
+  "current": [longitude, latitude], // Current location
+  "target": [longitude, latitude] // Optional nearest target location. Mostly for drivers.
+}
+Returns:
+{}
+
+Car methods
+===========
+
+car/list_models
+~~~~~~~~~~~~~~~
+Parameters:
+{}
+Returns:
+{
+ [
+  {
+   "model": "", // Car model ID
+   "model_name": "" //Car model full name
+  },
+  ...
+ ]
+}
+
+car/list_colors
+~~~~~~~~~~~~~~~
+Parameters:
+{}
+Returns:
+{
+ [
+  {
+   "color": "", // Car color ID
+   "color_name": "" //Car color full name
+  },
+  ...
+ ]
+}
+
+Order methods
+=============
+
+order/new
+~~~~~~~~~
+
+order/cancel
+~~~~~~~~~~~~
+
+order/list
+~~~~~~~~~~
+
+order/poll
+~~~~~~~~~~
+
+order/accept
+~~~~~~~~~~~~
+
+order/progress
+~~~~~~~~~~~~~~
+
+===========
+= Helpers =
+===========
+
+Sync
+====
+Returns current server's UTC unix timestamp. Can be used to synchronize clients without sane local clock.
+GET http://hostname.tld/api/sync
+
+Captcha
+=======
+Generates CAPTCHA image for user.
+GET http://hostname.tld/captcha?id=<user_id>
+
+User photo
+==========
+Allows user photo upload.
+POST http://hostname.tld/photo/user?id=<user_id>&salt=<salt>&signature=<signature>
+Content-Type: multipart/form-data
+First file is taken for processing.
+
+Car photo
+=========
+Allows car photo upload.
+POST http://hostname.tld/photo/car?id=<user_id>&salt=<salt>&signature=<signature>
+Content-Type: multipart/form-data
+First file is taken for processing.
+
+Order monitoring
+================
+Raw TCP socket. Server software immediately sends new orders to connected clients as JSON objects described in "order/poll" method.
+Every object begins with "---" line, ends with "..." (see YAML specification).
