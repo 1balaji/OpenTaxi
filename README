@@ -18,14 +18,14 @@ Design overview
 ===============
 It is a classic 3-tier:
 
-+--------------+          +----------+             +-------------+
-|  Client      |          |          |             |             |
-| software     |          |  Server  |             |     Data    |
-| (browser,    | / HTTP \ | software | / MongoDB \ |    storage  |
-| Java app,    | \ JSON / |  (PHP)   | \ protocol/ |    engine   |
-| proprietary  |          |          |             |   (MongoDB) |
-| application) |          |          |             |             |
-+--------------+          +----------+             +-------------+
++--------------+          +----------+             +-----------+
+|   Client     |          |          |             |           |
+|  software    |          |  Server  |             |   Data    |
+|  (browser,   | / HTTP \ | software | / MongoDB \ |  storage  |
+|  Java app,   | \ JSON / |  (PHP)   | \ protocol/ |  engine   |
+| Android app, |          |          |             | (MongoDB) |
+| iOS app etc) |          |          |             |           |
++--------------+          +----------+             +-----------+
 
 
 System requirements
