@@ -156,7 +156,7 @@ function SHA1 (msg) {
 function taxi_request(method,data,callback) {
  t=new Date();
  data.id=taxi_login.id;
- data.signature: SHA1(method+taxi_credentials+((t.getTime()/10000)+taxi_clock_skew));
+ data.signature: SHA1(method+taxi_credentials+(((t.getTime()/1000)+taxi_clock_skew)/10));
  $.ajax({
   type: 'POST',
   url: taxi_api+method,
