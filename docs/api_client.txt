@@ -20,11 +20,9 @@ Returned data always contain:
 }
 
 IMPORTANT!
-In order to generate valid signature the client must be somewhat synchrinized with the server (usually
-+/-20sec clock skew is appropriate).
+In order to generate valid signature the client must be somewhat synchrinized with the server (usually +/-20sec clock skew is appropriate).
 Server usually uses NTP (GPS or even local atomic clock may be an option).
-Client can use any synchronization method (NTP, GPS, GSM etc), but it is recommended to check server's
-timestamp using the sync helper (see below) to ensure good sync.
+Client can use any synchronization method (NTP, GPS, GSM etc), but it is recommended to check server's timestamp using the sync helper (see below) to ensure good sync.
 
 ====================
 = Method reference =
@@ -43,15 +41,11 @@ Common errors
 
 Handling user proprietary data
 ==============================
-Proprietary data objects (PD) are designed for client-side extensions. If client software needs to store
-some data about user or UI settings, it can use PD.
-PD are of two types: private and public. Private is available for user itself only. Public is sent to
-everyone registered user by "user/get" request.
+Proprietary data objects (PD) are designed for client-side extensions. If client software needs to store some data about user or UI settings, it can use PD.
+PD are of two types: private and public. Private is available for user itself only. Public is sent to everyone registered user by "user/get" request.
 PD size is limited (16kb by default). Do not use it for images, audio, video etc.
-PD is stored and transferred as an object. Best approach is to store each extension's proprietary data
-in separate object.
-Client software must be aware of PD. When updating user data, it must send all PD back to server, or
-else PD will be destroyed.
+PD is stored and transferred as an object. Best approach is to store each extension's proprietary data in separate object.
+Client software must be aware of PD. When updating user data, it must send all PD back to server, or else PD will be destroyed.
 
 User methods
 ============
