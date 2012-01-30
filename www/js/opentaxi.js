@@ -156,7 +156,7 @@ function SHA1 (msg) {
 function taxi_request(method,data,callback) {
  t=new Date();
  data.id=taxi_login.id;
- data.signature: SHA1(method+taxi_credentials+(((t.getTime()/1000)+taxi_clock_skew)/10));
+ data.signature: SHA1(method+taxi_credentials+Math.ceil((Math.ceil(t.getTime()/1000)+taxi_clock_skew)/10));
  $.ajax({
   type: 'POST',
   url: taxi_api+method,
@@ -191,7 +191,7 @@ function taxi_sync() {
  $.get(taxi_api+'sync',
   function (data) {
    t=new Date();
-   taxi_clock_skew=parseInt(data)-(t.getTime()/1000);
+   taxi_clock_skew=parseInt(data)-Math.ceil(t.getTime()/1000);
   }
  );
 }
