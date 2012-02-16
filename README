@@ -38,6 +38,7 @@ System requirements
   - GD library
   - MongoDB driver
   - memcached, xcache or APC module
+  - multibyte string support
   - FastCGI SAPI is recommended.
 * MongoDB server
 * memcached (if memcached is used for caching)

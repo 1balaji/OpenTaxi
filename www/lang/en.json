@@ -1,0 +1,15 @@
+{
+ "err": {
+  "bad_id_or_signature": "Wrong or absent ID/password or lost synchronization.",
+  "bad_syntax": "Request syntax is invalid.",
+  "no_id_given": "No ID given.",
+  "invalid_id_given": "Invalid ID given. ID must be 11 or 12 digits long and is a real phone number.",
+  "nick_too_short": "Nick too short. It must be at least %d characters long.",
+  "nick_too_long": "Nick too long. It must be %d characters maximum.",
+  "nick_taken": "This nick is already taken by someone. Try another one.",
+  "nick_not_found": "No user with specified nickname.",
+  "user_blocked": "User is blocked by administrator",
+  "id_taken": "This ID is already taken by someone. Contact administrator if this phone number is definitely yours.",
+  "challenge": "This action requires challenge confirmation. %s",
+ }
+}

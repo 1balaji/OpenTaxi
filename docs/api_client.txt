@@ -10,14 +10,19 @@ Content-Type: text/json
 HTTP POST content must be a valid JSON-encoded request data.
 Minimal required request data is:
 {
- "id": user_id, // user's phone number without "+" sign, expressed as integer number, 11 or 12 digits
+ "id": user_id, // user's phone number without "+" sign, integer, 11 or 12 digits
  "signature": "" // SHA1 ( method name + id + SHA1 ( password ) + (UTC unix timestamp)/10 ).
 }
 Returned data always contain:
 {
  "err": result, // result code, integer. 0 is OK.
- "errmsg": "" // optional, error message
+ "errmsg": "" // optional, error message key
+ "errprm": [] // optional, error message parameters
 }
+
+Error message key identifies a string in "err" object in language description. String must be processed by "printf" function within supplied parameters.
+Language description is available at http://<hostname.tld>/lang/<language_code>.json
+Available language codes can be retrieved from http://<hostname.tld>/lang/index.json
 
 IMPORTANT!
 In order to generate valid signature the client must be somewhat synchrinized with the server (usually +/-20sec clock skew is appropriate).
@@ -35,9 +40,28 @@ Parameters described must be merged with minimal request data.
 Common errors
 =============
 400 - Bad request (syntax error, required fields absent etc)
-401 - Bad signature (clock skew too large, wrong id and/or password or user blocked). No "errmsg".
-411 - CAPTCHA required (request rate is too high). No "errmsg".
+401 - Bad signature (clock skew too large, wrong id and/or password or user blocked).
+411 - Confirmation required. See "Challenge/response" section.
 500 - Internal server error
+
+Challenge/response
+==================
+If error code is 411, reply object additionally contains challenge data:
+{
+ "challenge":
+ {
+  "type": "", // Challenge module. For original JS client, file "js/challenge/<type>.js" contains function "taxi_challenge_<type>"
+  "data": ... // This string or object to pass to challenge function
+ }
+}
+So the request must be repeated with exactly same data (excluding signature) and additional response object:
+{
+ "response":
+ {
+  "type": "", // Same as in challenge data.
+  "data": ... // Response data.
+ }
+}
 
 Handling user proprietary data
 ==============================
@@ -99,13 +123,12 @@ Errors:
 
 user/register
 ~~~~~~~~~~~~~
-Register user.
+Register new user. No authentication required ("id" and "signature" may be empty). In this case or if authenicated user has no "dispatcher" or "super" flag, challenge is activated.
 Parameters:
 {
- "captcha_code": "", // CAPTCHA image is loaded from http://hostname.tld/captcha/?id=user_id
-                     // Only users with "dispatcher" flag may omit this field.
  "user":
  {
+  "id": user_id, // user's phone number without "+" sign, integer, 11 or 12 digits
   "password": "", // SHA1 hash. Required
   "nick": "", // required
   "fullname": "",
@@ -117,8 +140,9 @@ Parameters:
   {
    "blocked": false, // User is blocked by administrator
    "super": false, // Superuser
-   "dispatcher": false // User is allowed to place orders for other users
+   "dispatcher": false // User is allowed to register users without challenge and place orders for other users
   },
+  "car": // for drivers
   {
    "model": "", // Car model ID (taken from car/list_models method)
    "color": "", // Car color ID (taken from car/list_colors method)
@@ -137,7 +161,6 @@ Returns:
 {}
 Errors:
 405 - ID or nick already exists in database
-410 - Bad CAPTCHA code
 
 
 user/update
@@ -264,11 +287,6 @@ Sync
 ====
 Returns current server's UTC unix timestamp. Can be used to synchronize clients without sane local clock.
 GET http://hostname.tld/api/sync
-
-Captcha
-=======
-Generates CAPTCHA image for user.
-GET http://hostname.tld/captcha?id=<user_id>
 
 User photo
 ==========

@@ -7,7 +7,7 @@ header('Content-Type: text/html; charset=UTF-8');
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 <link rel="stylesheet" href="styles.css"/>
 <script type="text/javascript" src="js/jquery.js"></script>
-<script type="text/javascript" src="js/opentaxi.js"></script>
+<script type="text/javascript" src="js/api.js"></script>
 <script type="text/javascript">
 <?php
 
@@ -15,6 +15,7 @@ if($_GET['lang']) {
  $lang=$_GET['lang'];
  setcookie('lang',$lang);
 } else {
+ require_once('inc/config.inc.php');
  require_once('inc/cache.inc.php');
  cache_init();
  if(cache_isset('taxi_lang_available')) {
@@ -31,7 +32,7 @@ if($_GET['lang']) {
    break;
   }
  }
- $lang=$lang_detect?$lang_detect:'en';
+ $lang=$lang_detect?$lang_detect:$CONFIG['DEFAULTS']['LANG'];
 }
 
 echo "var lang_detect='".$lang."';";
