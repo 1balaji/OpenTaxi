@@ -1,0 +1,18 @@
+******************************
+** CAPTCHA challenge module **
+******************************
+Based on KCaptcha code: http://captcha.ru
+
+Implements server challenge API ('captcha' challenge module), original JS client challenge API, helper script.
+
+Files:
+/
+| + inc
+| | + challenge
+| |   - captcha.inc.php
+| + js
+| | + challenge
+| |   - captcha.js
+| + kcaptcha
+| | + ...
+- captcha.php
