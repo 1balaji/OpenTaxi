@@ -230,33 +230,19 @@ Car methods
 
 car/list_models
 ~~~~~~~~~~~~~~~
+Retrieve available car models IDs. Display name is available in language description's "car.model" object.
 Parameters:
 {}
 Returns:
-{
- [
-  {
-   "model": "", // Car model ID
-   "model_name": "" //Car model full name
-  },
-  ...
- ]
-}
+[ "model1", "model2", ... ]
 
 car/list_colors
 ~~~~~~~~~~~~~~~
+Retrieve available car colors IDs. Display name is available in language description's "car.color" object.
 Parameters:
 {}
 Returns:
-{
- [
-  {
-   "color": "", // Car color ID
-   "color_name": "" //Car color full name
-  },
-  ...
- ]
-}
+[ "color1", "color2", ... ]
 
 Order methods
 =============
@@ -278,6 +264,27 @@ order/accept
 
 order/progress
 ~~~~~~~~~~~~~~
+
+Config methods
+==============
+
+config/limits
+~~~~~~~~~~~~~
+Get limits from system configuration. Does not require authentication.
+Parameters:
+{}
+Returns:
+{
+ "NICK_LENGTH":
+  {
+   "MIN": 6,  // Minimum nick length.
+   "MAX": 64, // Maximum nick length.
+  }
+ "PD_PRIVATE_LENGTH": 16384, // Maximum length of private proprietary data block.
+ "PD_PUBLIC_LENGTH": 16384, // Maximum length of public proprietary data block.
+ "ID_REGEX": "", // Optional. Additional user ID (=phone number) constraint regex.
+ "CAR_NUMBER_REGEX:  // Optional. Additional car number constraint regex.
+}
 
 ===========
 = Helpers =

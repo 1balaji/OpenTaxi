@@ -22,6 +22,23 @@ if($RQ['user']['id']) {
        );
        fill_if_nonempty($user,$RQ['user'],'fullname');
        fill_if_nonempty($user,$RQ['user'],'email');
+       if($CONFIG['REGISTER']['DEFAULT_BLOCKED'])
+       {
+        $user['flags']['blocked']=true;
+       }
+       if($RQ['user']['flags'] and $USER['flags']['super']) {
+        $user['flags']=$RQ['user']['flags'];
+       }
+       if(is_array($RQ['user']['car']) and car_model_exists($RQ['user']['car']['model']) and car_color_exists($RQ['user']['car']['model']) and check_car_number($RQ['user']['car']['number'])) {
+        $user['car']=array(
+         'model' => $RQ['user']['car']['model'],
+         'color' => $RQ['user']['car']['color'],
+         'number' => $RQ['user']['car']['number']
+        );
+        if($RQ['user']['driving']) {
+         $user['driving']=true;
+        }
+       }
        update_user($user);
       } else {
        die('{ "err": 400, "errmsg": "invalid_syntax" }');

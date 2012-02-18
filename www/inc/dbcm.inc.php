@@ -11,12 +11,14 @@ cache_init();
 
 function connect_db() {
  global $DB, $CONFIG;
- try {
-  $Mongo=new Mongo();
-  $DB=$Mongo->selectDB($CONFIG['MONGO']['DB']);
- } catch (MongoConnectionException $e) {
-  header('HTTP/1.0 500 Internal Server Error');
-  die();
+ if(!is_a($DB,'MongoDB')) {
+  try {
+   $Mongo=new Mongo();
+   $DB=$Mongo->selectDB($CONFIG['MONGO']['DB']);
+  } catch (MongoConnectionException $e) {
+   header('HTTP/1.0 500 Internal Server Error');
+   die();
+  }
  }
 }
 
@@ -29,6 +31,7 @@ function fetch_user_by_id($id) {
   if(cache_isset('taxi_uid_'.$id)) {
    return cache_get('taxi_uid_'.$id);
   } else {
+   global $DB;
    connect_db();
    $result=$DB->users->findOne(['id'=>$id]);
    if(is_array($result)) {
@@ -47,6 +50,7 @@ function fetch_user_by_nick($nick) {
   if(cache_isset('taxi_un_'.$nick)) {
    return fetch_user_by_id(cache_get('taxi_un_'.$nick));
   } else {
+   global $DB;
    connect_db();
    $result=$DB->users->findOne(['nick'=>$nick]);
    if(is_array($result)) {
@@ -62,6 +66,7 @@ function fetch_user_by_nick($nick) {
 
 // Update user
 function update_user($user) {
+ global $DB;
  connect_db();
  $DB->users->update(
   array('id'=>$user['id']),
@@ -88,6 +93,8 @@ function get_car_models() {
  if(cache_isset('taxi_car_models')) {
   return cache_get('taxi_car_models');
  } else {
+  global $DB;
+  connect_db();
   $models=iterator_to_array($DB->car_models->find());
   cache_set('taxi_car_models',$models);
   return $models;
@@ -102,6 +109,8 @@ function get_car_colors() {
  if(cache_isset('taxi_car_colors')) {
   return cache_get('taxi_car_colors');
  } else {
+  global $DB;
+  connect_db();
   $colors=iterator_to_array($DB->car_colors->find());
   cache_set('taxi_car_colors',$colors);
   return $colors;
@@ -128,5 +137,11 @@ function fill_if_published(&$data, &$src_data, $field) {
 }
 
 function check_user_id($id) {
- return preg_match('/\d{11,12}/', $id) and ((!$CONFIG['REGISTER']['ID_REGEX']) or preg_match($CONFIG['REGISTER']['ID_REGEX'],$id))
+ global $CONFIG;
+ return preg_match('/\d{11,12}/', $id) and ((!$CONFIG['REGISTER']['ID_REGEX']) or preg_match($CONFIG['REGISTER']['ID_REGEX'],$id));
+}
+
+function check_car_number($id) {
+ global $CONFIG;
+ return (!$CONFIG['REGISTER']['CAR_NUMBER_REGEX']) or preg_match($CONFIG['REGISTER']['CAR_NUMBER_REGEX'],$id);
 }
