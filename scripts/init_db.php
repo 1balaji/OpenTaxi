@@ -21,7 +21,24 @@ if(!is_array($DB->users->findOne(array('id'=>0)))) {
 
 $DB->car_models->ensureIndex(array('model'=>1),array('unique'=>true));
 if($DB->car_models->count()==0) {
- $DB->car_models->insert(array( 'model'=>'alfaromeo' ));
+ $DB->car_models->insert(array( 'model'=>'audi' ));
+ $DB->car_models->insert(array( 'model'=>'bmw' ));
+ $DB->car_models->insert(array( 'model'=>'chevrolet' ));
+ $DB->car_models->insert(array( 'model'=>'citroen' ));
+ $DB->car_models->insert(array( 'model'=>'ford' ));
+ $DB->car_models->insert(array( 'model'=>'honda' ));
+ $DB->car_models->insert(array( 'model'=>'hyundai' ));
+ $DB->car_models->insert(array( 'model'=>'lada_classic' ));
+ $DB->car_models->insert(array( 'model'=>'lada_modern' ));
+ $DB->car_models->insert(array( 'model'=>'mazda' ));
+ $DB->car_models->insert(array( 'model'=>'mercedes' ));
+ $DB->car_models->insert(array( 'model'=>'nissan' ));
+ $DB->car_models->insert(array( 'model'=>'opel' ));
+ $DB->car_models->insert(array( 'model'=>'peugeot' ));
+ $DB->car_models->insert(array( 'model'=>'toyota' ));
+ $DB->car_models->insert(array( 'model'=>'volga' ));
+ $DB->car_models->insert(array( 'model'=>'volkswagen' ));
+ $DB->car_models->insert(array( 'model'=>'volvo' ));
 }
 
 $DB->car_colors->ensureIndex(array('color'=>1),array('unique'=>true));
