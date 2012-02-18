@@ -11,5 +11,24 @@
   "user_blocked": "User is blocked by administrator",
   "id_taken": "This ID is already taken by someone. Contact administrator if this phone number is definitely yours.",
   "challenge": "This action requires challenge confirmation. %s",
- }
+ },
+ "car": {
+  "model": {
+  },
+  "color": {
+   "black": "Black",
+   "white": "White",
+   "red": "Red",
+   "yellow": "Yellow",
+   "green": "Green",
+   "blue": "Blue",
+   "purple": "Purple",
+   "maroon": "Maroon",
+   "beige": "Beige",
+   "silver": "Silver",
+   "golden": "Golden",
+   "other_dark": "Other dark color",
+   "other_bright": "Other bright color",
+  }
+ )
 }

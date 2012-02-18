@@ -18,7 +18,7 @@ if(is_array($RQ=json_decode(file_get_contents('php://input'),true))) {
    $t=(gmmktime()/10);
    $signed=false;
    $mup=$method.$USER['id'].$USER['password'];
-   for($i=t+$CONFIG['API']['CLOCK_SKEW'][0];$i<t+$CONFIG['API']['CLOCK_SKEW'][1];$i++) {
+   for($i=t+$CONFIG['API']['ALLOWED_CLOCK_SKEW'][0];$i<t+$CONFIG['API']['ALLOWED_CLOCK_SKEW'][1];$i++) {
     if(sha1($mup.$i)==$RQ['signature']) {
      $signed=true;
      break;

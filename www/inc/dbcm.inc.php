@@ -68,14 +68,48 @@ function update_user($user) {
   $user,
   array('upsert'=>true)
  );
+ cache_unset('taxi_!uid_'.$user['id']);
  cache_set('taxi_uid_'.$user['id'],$user);
+ cache_unset('taxi_!un_'.$user['nick']);
  cache_set('taxi_un_'.$user['nick'],$user['id']);
 }
 
 // Cache cleanup
 function cleanup_user($user) {
- cache_unset('taxi_uid_'.$user['id'],$user);
- cache_unset('taxi_un_'.$user['nick'],$user['id']);
+ cache_unset('taxi_!uid_'.$user['id']);
+ cache_unset('taxi_uid_'.$user['id']);
+ cache_unset('taxi_!un_'.$user['nick']);
+ cache_unset('taxi_un_'.$user['nick']);
+}
+
+// Car functions
+// ~~~~~~~~~~~~~
+function get_car_models() {
+ if(cache_isset('taxi_car_models')) {
+  return cache_get('taxi_car_models');
+ } else {
+  $models=iterator_to_array($DB->car_models->find());
+  cache_set('taxi_car_models',$models);
+  return $models;
+ }
+}
+
+function model_exists($model) {
+ return in_array($model,get_car_models());
+}
+
+function get_car_colors() {
+ if(cache_isset('taxi_car_colors')) {
+  return cache_get('taxi_car_colors');
+ } else {
+  $colors=iterator_to_array($DB->car_colors->find());
+  cache_set('taxi_car_colors',$colors);
+  return $colors;
+ }
+}
+
+function color_exists($color) {
+ return in_array($color,get_car_colors());
 }
 
 // Utility functions
@@ -91,4 +125,8 @@ function fill_if_published(&$data, &$src_data, $field) {
  if($src_data[$field.'_published']) {
   $data[$field]=$src_data[$field];
  }
+}
+
+function check_user_id($id) {
+ return preg_match('/\d{11,12}/', $id) and ((!$CONFIG['REGISTER']['ID_REGEX']) or preg_match($CONFIG['REGISTER']['ID_REGEX'],$id))
 }
